@@ -442,7 +442,9 @@ module ActiveRecord #:nodoc:
                                          :precision => type_col.precision
             end
 
-            self.connection.add_index versioned_table_name, versioned_foreign_key
+            # Make sure not to create an index that is too long (rails limits index names to 64 characters from version 3.0.3)
+            name = 'index_' + versioned_table_name + '_on_' + versioned_foreign_key
+            self.connection.add_index versioned_table_name, versioned_foreign_key, :name => name[0,63]
           end
 
           # Rake migration task to drop the versioned table
