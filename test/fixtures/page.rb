@@ -30,6 +30,7 @@ class LockedPage < ActiveRecord::Base
     :table_name         => :locked_pages_revisions, 
     :class_name         => 'LockedPageRevision',
     :version_column     => :lock_version,
+    :version_at_column  => :version_at,
     :limit              => 2,
     :if_changed         => :title,
     :extend             => LockedPageExtension
