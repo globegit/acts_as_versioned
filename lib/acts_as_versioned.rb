@@ -165,14 +165,15 @@ module ActiveRecord #:nodoc:
         return if self.included_modules.include?(ActiveRecord::Acts::Versioned::Behaviors)
 
         cattr_accessor :versioned_class_name, :versioned_foreign_key, :versioned_table_name, :versioned_inheritance_column,
-                       :version_column, :max_version_limit, :track_altered_attributes, :version_condition, :version_sequence_name, :non_versioned_columns,
-                       :version_association_options, :version_if_changed
+                       :version_column, :version_at_column, :max_version_limit, :track_altered_attributes, :version_condition,
+                       :version_sequence_name, :non_versioned_columns, :version_association_options, :version_if_changed
 
         self.versioned_class_name         = options[:class_name] || "Version"
         self.versioned_foreign_key        = options[:foreign_key] || self.to_s.foreign_key
         self.versioned_table_name         = options[:table_name] || "#{table_name_prefix}#{base_class.name.demodulize.underscore}_versions#{table_name_suffix}"
         self.versioned_inheritance_column = options[:inheritance_column] || "versioned_#{inheritance_column}"
         self.version_column               = options[:version_column] || 'version'
+        self.version_at_column            = options[:version_at_column] || 'version_at'
         self.version_sequence_name        = options[:sequence_name]
         self.max_version_limit            = options[:limit].to_i
         self.version_condition            = options[:if] || true
