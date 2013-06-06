@@ -279,7 +279,7 @@ module ActiveRecord #:nodoc:
             rev = self.class.versioned_class.new
             clone_versioned_model(self, rev)
             rev.send("#{self.class.version_column}=", send(self.class.version_column))
-	    rev.send("#{self.class.version_at)=", Time.now)#TODO
+	          # rev.send("#{self.class.version_at}=", Time.now)  # Is this appropriate?
             rev.send("#{self.class.versioned_foreign_key}=", id)
             rev.save
           end
@@ -397,7 +397,10 @@ module ActiveRecord #:nodoc:
         # sets the new version before saving, unless you're using optimistic locking.  In that case, let it take care of the version.
         def set_new_version
           @saving_version = new_record? || save_version?
-          self.send("#{self.class.version_column}=", next_version) if new_record? || (!locking_enabled? && save_version?)
+          if new_record? || (!locking_enabled? && save_version?)
+            self.send("#{self.class.version_column}=", next_version)
+            self.send("#{self.class.version_at_column}=", Time.now())
+          end
         end
 
         # Gets the next available version for the current record, or 1 for a new record
