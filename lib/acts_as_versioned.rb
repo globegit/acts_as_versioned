@@ -279,7 +279,7 @@ module ActiveRecord #:nodoc:
             rev = self.class.versioned_class.new
             clone_versioned_model(self, rev)
             rev.send("#{self.class.version_column}=", send(self.class.version_column))
-	          # rev.send("#{self.class.version_at}=", Time.now)  # Is this appropriate?
+	          rev.send("#{self.class.version_at_column}=", Time.now)
             rev.send("#{self.class.versioned_foreign_key}=", id)
             rev.save
           end
