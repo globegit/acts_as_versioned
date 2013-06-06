@@ -215,15 +215,15 @@ module ActiveRecord #:nodoc:
           # find first version before the given version
           def self.before(version)
             where(original_class.versioned_foreign_key.to_sym => version.send(original_class.versioned_foreign_key)).
-	      where(self.arel_table[original_class.version_column].lt(version.version)).
+	            where(self.arel_table[original_class.version_column].lt(version.version)).
               order(self.arel_table[original_class.version_column].desc).
               first
-	  end
+          end
 
           # find first version after the given version.
           def self.after(version)
             where(original_class.versioned_foreign_key.to_sym => version.send(original_class.versioned_foreign_key)).
-	      where(self.arel_table[original_class.version_column].gt(version.version)).
+	            where(self.arel_table[original_class.version_column].gt(version.version)).
               order(self.arel_table[original_class.version_column].asc).
               first
           end
@@ -279,6 +279,7 @@ module ActiveRecord #:nodoc:
             rev = self.class.versioned_class.new
             clone_versioned_model(self, rev)
             rev.send("#{self.class.version_column}=", send(self.class.version_column))
+	    rev.send("#{self.class.version_at)=", Time.now)#TODO
             rev.send("#{self.class.versioned_foreign_key}=", id)
             rev.save
           end
