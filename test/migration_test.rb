@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__), 'abstract_unit')
 if ActiveRecord::Base.connection.supports_migrations? 
   class Thing < ActiveRecord::Base
     attr_accessor :version
+    attr_accessor :version_at
     acts_as_versioned
   end
 

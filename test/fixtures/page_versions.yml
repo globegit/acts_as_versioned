@@ -4,6 +4,7 @@ welcome_2:
   title: Welcome to the weblog
   body: Such a lovely day
   version: 24
+  version_at: 2008-01-01 00:00:00
   author_id: 1
   revisor_id: 1
 welcome_1:
@@ -12,5 +13,6 @@ welcome_1:
   title: Welcome to the weblg
   body: Such a lovely day
   version: 23
+  version_at: 2007-01-01 00:00:00
   author_id: 2
   revisor_id: 2

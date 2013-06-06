@@ -1,6 +1,7 @@
 ActiveRecord::Schema.define(:version => 0) do
   create_table :pages, :force => true do |t|
     t.column :version, :integer
+    t.column :version_at, :datetime
     t.column :title, :string, :limit => 255
     t.column :body, :text
     t.column :created_on, :datetime
@@ -12,6 +13,7 @@ ActiveRecord::Schema.define(:version => 0) do
   create_table :page_versions, :force => true do |t|
     t.column :page_id, :integer
     t.column :version, :integer
+    t.column :version_at, :datetime
     t.column :title, :string, :limit => 255
     t.column :body, :text
     t.column :created_on, :datetime
@@ -20,7 +22,8 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :revisor_id, :integer
   end
   
-  add_index :page_versions, [:page_id, :version], :unique => true
+  add_index :page_versions, [:page_id, :version, :version_at],
+    :unique => true, :name => "page_version_index"
   
   create_table :authors, :force => true do |t|
     t.column :page_id, :integer
@@ -49,6 +52,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :name, :string, :limit => 50
     t.column :foo, :string
     t.column :version, :integer
+    t.column :version_at, :datetime
     t.column :updated_at, :datetime
   end
 
@@ -56,10 +60,12 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :widget_id, :integer
     t.column :name, :string, :limit => 50
     t.column :version, :integer
+    t.column :version_at, :datetime
     t.column :updated_at, :datetime
   end
   
-  add_index :widget_versions, [:widget_id, :version], :unique => true
+  add_index :widget_versions, [:widget_id, :version, :version_at],
+            :unique => true, :name => "widget_version_index"
   
   create_table :landmarks, :force => true do |t|
     t.column :name, :string
@@ -67,6 +73,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :longitude, :float
     t.column :doesnt_trigger_version,:string
     t.column :version, :integer
+    t.column :version_at, :datetime
   end
 
   create_table :landmark_versions, :force => true do |t|
@@ -76,7 +83,9 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :longitude, :float
     t.column :doesnt_trigger_version,:string
     t.column :version, :integer
+    t.column :version_at, :datetime
   end
   
-  add_index :landmark_versions, [:landmark_id, :version], :unique => true
+  add_index :landmark_versions, [:landmark_id, :version, :version_at],
+            :unique => true, :name => "landmark_version_index"
 end

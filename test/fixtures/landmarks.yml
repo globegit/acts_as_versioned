@@ -5,3 +5,4 @@ washington:
     longitude: -77.036667
     doesnt_trigger_version: This is not important
     version: 1
+    version_at: 2013-06-01 10:00:00
