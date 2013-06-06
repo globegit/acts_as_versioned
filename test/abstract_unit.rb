@@ -9,12 +9,6 @@ require 'active_record'
 require 'active_record/fixtures'
 require 'active_record/test_case'
 
-begin
-  require 'ruby-debug'
-  Debugger.start
-rescue LoadError
-end
-
 require 'acts_as_versioned'
 
 config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
