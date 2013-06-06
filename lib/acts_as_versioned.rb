@@ -214,26 +214,28 @@ module ActiveRecord #:nodoc:
 
           # find first version before the given version
           def self.before(version)
-            where(["#{original_class.versioned_foreign_key} = ? and version < ?", version.send(original_class.versioned_foreign_key), version.version]).
-                    order('version DESC').
-                    first
-          end
+            where(original_class.versioned_foreign_key.to_sym => version.send(original_class.versioned_foreign_key)).
+	      where(self.arel_table[original_class.version_column].lt(version.version)).
+              order(self.arel_table[original_class.version_column].desc).
+              first
+	  end
 
           # find first version after the given version.
           def self.after(version)
-            where(["#{original_class.versioned_foreign_key} = ? and version > ?", version.send(original_class.versioned_foreign_key), version.version]).
-                    order('version ASC').
-                    first
+            where(original_class.versioned_foreign_key.to_sym => version.send(original_class.versioned_foreign_key)).
+	      where(self.arel_table[original_class.version_column].gt(version.version)).
+              order(self.arel_table[original_class.version_column].asc).
+              first
           end
 
           # finds earliest version of this record
           def self.earliest
-            order("#{original_class.version_column}").first
+            order(self.arel_table[original_class.version_column]).first
           end
 
           # find latest version of this record
           def self.latest
-            order("#{original_class.version_column} desc").first
+            order(self.arel_table[original_class.version_column].desc).first
           end
 
           def previous
