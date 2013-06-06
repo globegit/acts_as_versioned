@@ -350,7 +350,7 @@ module ActiveRecord #:nodoc:
           end
         end
 
-        # Checks whether a new version shall be saved or not.  Calls <tt>version_condition_met?</tt> and <tt>changed?</tt>.
+        # Checks whether a new version shall be saved or not.  Calls <tt>version_condition_met?</tt> and <tt>altered?</tt>.
         def save_version?
           version_condition_met? && altered?
         end
