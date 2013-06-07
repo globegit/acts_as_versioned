@@ -279,7 +279,7 @@ module ActiveRecord #:nodoc:
             rev = self.class.versioned_class.new
             clone_versioned_model(self, rev)
             rev.send("#{self.class.version_column}=", send(self.class.version_column))
-	          rev.send("#{self.class.version_at_column}=", Time.now)
+	          rev.send("#{self.class.version_at_column}=", send(self.class.version_at_column))
             rev.send("#{self.class.versioned_foreign_key}=", id)
             rev.save
           end
@@ -295,14 +295,20 @@ module ActiveRecord #:nodoc:
           end
         end
 
-        # Reverts a model to a given version.  Takes either a version number or an instance of the versioned model
+        # Reverts a model to a given version.  Takes a version number, timestamp, or an instance of the versioned model
         def revert_to(version)
           if version.is_a?(self.class.versioned_class)
             return false unless version.send(self.class.versioned_foreign_key) == id and !version.new_record?
+          elsif version.respond_to?(:strftime) # Supported by Time, Date, and DateTime (in rails, at least)
+            version = versions.where("#{self.class.version_at_column} <= ?", version).
+              order("#{self.class.version_column} desc").
+              first
+            return false if version.nil?
           else
             return false unless version = versions.where(self.class.version_column => version).first
           end
           self.clone_versioned_model(version, self)
+          send("#{self.class.version_at_column}=", version.send(self.class.version_at_column))
           send("#{self.class.version_column}=", version.send(self.class.version_column))
           true
         end
