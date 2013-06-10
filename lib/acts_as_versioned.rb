@@ -153,7 +153,14 @@ module ActiveRecord #:nodoc:
       #
       #   [self.primary_key, inheritance_column, 'version', 'version_at', 'lock_version', versioned_inheritance_column]
       #
-      # You can add or change those by modifying #non_versioned_columns.  Note that this takes strings and not symbols.
+      # You can specify that other columns should or should not be versioned in two ways:
+      #
+      # 1) Provide a proc to :versioned_columns, which will be given a string naming a column.  The return value is used
+      # to select columns:  true means it's versioned, false means it isn't.
+      #
+      # acts_as_versioned :versioned_columns => ->(name) { ... }
+      #
+      # 2) By providing an explicit list of #non_versioned_columns.  This is an array of strings.
       #
       #   class Post < ActiveRecord::Base
       #     acts_as_versioned
@@ -177,8 +184,18 @@ module ActiveRecord #:nodoc:
         self.version_sequence_name        = options[:sequence_name]
         self.max_version_limit            = options[:limit].to_i
         self.version_condition            = options[:if] || true
+
+        dont_version =
+          if options[:versioned_columns].respond_to?(:call)
+            self.columns.map {|column| column.name}.reject {|name| options[:versioned_columns].call(name) }
+          elsif !options[:non_versioned_columns].nil?
+            options[:non_versioned_columns].to_a.map(&:to_s)
+          else
+            []
+          end
+
         self.non_versioned_columns        = [self.primary_key, inheritance_column, self.version_column, self.version_at_column, 
-                                             'lock_version', versioned_inheritance_column] + options[:non_versioned_columns].to_a.map(&:to_s)
+                                             'lock_version', versioned_inheritance_column] + dont_version
         self.version_association_options  = {
                                                     :class_name  => "#{self.to_s}::#{versioned_class_name}",
                                                     :foreign_key => versioned_foreign_key,
