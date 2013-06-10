@@ -1,0 +1,2 @@
+module ActsAsVersioned
+end
