@@ -77,6 +77,7 @@ module ActiveRecord #:nodoc:
       # * <tt>foreign_key</tt> - foreign key used to relate the versioned model to the original model (default: page_id in the above example)
       # * <tt>inheritance_column</tt> - name of the column to save the model's inheritance_column value for STI.  (default: versioned_type)
       # * <tt>version_column</tt> - name of the column in the model that keeps the version number (default: version)
+      # * <tt>version_at_column</tt> - name of the column in the model for the timestamp of the version
       # * <tt>sequence_name</tt> - name of the custom sequence to be used by the versioned model.
       # * <tt>limit</tt> - number of revisions to keep, defaults to unlimited
       # * <tt>if</tt> - symbol of method to check before saving a new version.  If this method returns false, a new version is not saved.
@@ -276,6 +277,8 @@ module ActiveRecord #:nodoc:
                                    :foreign_key => versioned_foreign_key
         versioned_class.send :include, options[:extend] if options[:extend].is_a?(Module)
         versioned_class.sequence_name = version_sequence_name if version_sequence_name
+
+        versioned_class.send :validates, self.version_at_column, :presence => {:message => "is required"}
       end
 
       module Behaviors
@@ -422,7 +425,10 @@ module ActiveRecord #:nodoc:
           @saving_version = new_record? || save_version?
           if new_record? || (!locking_enabled? && save_version?)
             self.send("#{self.class.version_column}=", next_version)
-            self.send("#{self.class.version_at_column}=", Time.now())
+            # If unset by user, ensure that version_at is set to something appropriate.
+            if self.send("#{self.class.version_at_column}").nil?
+              self.send("#{self.class.version_at_column}=", Time.now().utc)
+            end
           end
         end
 
