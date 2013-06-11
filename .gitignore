@@ -1,8 +1,7 @@
-.bundle
-.idea
-test/*.log
-pkg
-.rvmrc
-*.sqlite3.db
-.project
-Gemfile.lock
+.bundle/
+log/*.log
+pkg/
+test/dummy/db/*.sqlite3
+test/dummy/log/*.log
+test/dummy/tmp/
+test/dummy/.sass-cache
