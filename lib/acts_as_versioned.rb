@@ -277,8 +277,6 @@ module ActiveRecord #:nodoc:
                                    :foreign_key => versioned_foreign_key
         versioned_class.send :include, options[:extend] if options[:extend].is_a?(Module)
         versioned_class.sequence_name = version_sequence_name if version_sequence_name
-
-        versioned_class.send :validates, self.version_at_column, :presence => {:message => "is required"}
       end
 
       module Behaviors
@@ -290,6 +288,9 @@ module ActiveRecord #:nodoc:
           before_save :set_new_version
           after_save :save_version
           after_save :clear_old_versions
+
+          validates self.version_at_column, :presence => {:message => "is required"}
+          validates :comments, :presence => {:message => "is required"}
         end
 
         # Saves a version of the model in the versioned table.  This is called in the after_save callback by default
