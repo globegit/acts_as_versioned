@@ -425,8 +425,9 @@ module ActiveRecord #:nodoc:
           @saving_version = new_record? || save_version?
           if new_record? || (!locking_enabled? && save_version?)
             self.send("#{self.class.version_column}=", next_version)
-            # If unset by user, ensure that version_at is set to something appropriate.
-            if self.send("#{self.class.version_at_column}").nil?
+            # If version_at is unset or unchanged by the user, update it.
+            if self.send("#{self.class.version_at_column}").nil? or
+               !(self.changed.include?(self.class.version_at_column))
               self.send("#{self.class.version_at_column}=", Time.now().utc)
             end
           end
