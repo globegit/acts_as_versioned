@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(:version => 20130614161334) do
     t.datetime "version_at"
     t.text     "name"
     t.text     "body"
+    t.text     "comments"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -28,8 +29,10 @@ ActiveRecord::Schema.define(:version => 20130614161334) do
   create_table "documents", :force => true do |t|
     t.text     "name"
     t.text     "body"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.text     "comments"
+    t.integer  "dont_version"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.integer  "version"
     t.datetime "version_at"
   end
