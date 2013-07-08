@@ -15,12 +15,14 @@ class ActsAsVersionedTest < ActiveSupport::TestCase
     #
     assert_equal 1, doc.version
     doc.dont_version = 10
-    doc.save
+	assert_equal true, doc.changed?
+    doc.save!
     assert_equal 1, doc.version
+	assert_equal false, doc.changed?
 
     doc.comments = "Sent to editor"
     doc.version_at = Time.at(Time.now.to_i - 400)
-    doc.save
+    doc.save!
     assert_equal 2, doc.version
   end
 end
