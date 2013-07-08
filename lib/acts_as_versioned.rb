@@ -188,15 +188,25 @@ module ActiveRecord #:nodoc:
 
         dont_version =
           if options[:versioned_columns].respond_to?(:call)
-            self.columns.map {|column| column.name}.reject {|name| options[:versioned_columns].call(name) }
+            self.column_names.reject {|name| options[:versioned_columns].call(name) }
           elsif !options[:non_versioned_columns].nil?
-            options[:non_versioned_columns].to_a.map(&:to_s)
+            column_names - non_versioned_columns
           else
             []
           end
 
-        self.non_versioned_columns        = [self.primary_key, inheritance_column, self.version_column, self.version_at_column, 
-                                             'lock_version', versioned_inheritance_column] + dont_version
+        self.non_versioned_columns = [self.primary_key, inheritance_column, self.version_column, self.version_at_column,
+                                      'lock_version', versioned_inheritance_column] + dont_version
+
+        self.track_altered_attributes = true
+        if options[:if_changed].nil?
+          # Default if_changed behavior should be to pay attention to all but non_versioned_columns
+          self.version_if_changed = self.column_names - self.non_versioned_columns
+        else
+          options[:if_changed] = [options[:if_changed]] unless options[:if_changed].is_a?(Array)
+          self.version_if_changed = options[:if_changed].map(&:to_s)
+        end
+
         self.version_association_options  = {
                                                     :class_name  => "#{self.to_s}::#{versioned_class_name}",
                                                     :foreign_key => versioned_foreign_key,
@@ -210,12 +220,6 @@ module ActiveRecord #:nodoc:
           end
 
           options[:extend] = self.const_get(extension_module_name)
-        end
-
-        unless options[:if_changed].nil?
-          self.track_altered_attributes = true
-          options[:if_changed] = [options[:if_changed]] unless options[:if_changed].is_a?(Array)
-          self.version_if_changed = options[:if_changed].map(&:to_s)
         end
 
         include options[:extend] if options[:extend].is_a?(Module)
