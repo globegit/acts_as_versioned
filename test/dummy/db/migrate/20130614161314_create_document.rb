@@ -3,7 +3,6 @@ class CreateDocument < ActiveRecord::Migration
     create_table(:documents) do |t|
       t.column :name, :text
       t.column :body, :text
-      t.column :comments, :text
       t.column :dont_version, :integer
       t.timestamps
     end

@@ -294,7 +294,6 @@ module ActiveRecord #:nodoc:
           after_save :clear_old_versions
 
           validates self.version_at_column, :presence => {:message => "is required"}
-          validates :comments, :presence => {:message => "is required"}
         end
 
         # Saves a version of the model in the versioned table.  This is called in the after_save callback by default
